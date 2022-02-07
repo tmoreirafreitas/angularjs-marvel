@@ -54,7 +54,7 @@ async ($scope, $interval, personagensAPI, utilAPI, blockUI) => {
         
         await Promise.all(resolve.data.data.results[0].series.items.map(async (item) => {
             $scope.listaSeries = [];
-            const serieResolve = await personagensAPI.obterSerieUrl(item.toString().replace('http://', 'https://'));
+            const serieResolve = await personagensAPI.obterSerieUrl(item.resourceURI.replace('http:','https:'));
             $scope.listaSeries.push(...serieResolve.data.data.results);
         })).then(() => {
             $scope.paginator = utilAPI.paginate($scope.listaSeries, 1, 3);
