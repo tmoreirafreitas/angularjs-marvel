@@ -1,4 +1,4 @@
 FROM nginx
 WORKDIR /app
 COPY app /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 5000
