@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html ng-app="marvelApp">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+
+        <title>Lista de Personagens da Márvel</title>
+
+        <link rel="stylesheet" type="text/css" media="screen" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="lib/angular-block-ui/dist/angular-block-ui.css"/>
+        <link rel="stylesheet" type="text/css" media="screen" href="lib/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
+
+        <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="lib/angular/angular.min.js"></script>
+        <script src="lib/angular-block-ui/dist/angular-block-ui.js"></script>
+        <script src="lib/angular-messages/angular-messages.min.js"></script>
+        <script src="lib/crypto-js/crypto-js.js"></script>
+        <script src="lib/jquery/dist/jquery.min.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/controllers/homeController.js"></script>
+        <script src="js/services/authAPI.js"></script>
+        <script src="js/services/personagensAPI.js"></script>
+        <script src="js/services/paginateAPI.js"></script>
+        <script src="js/services/utilAPI.js"></script>
+        <script src="js/config/config.js"></script>
+    </head>
+
+    <body ng-controller="homeController">
+        <div class="container">
+            <h1>{{app}}</h1>
+
+            <input class="form-control" 
+                  type="text" 
+                  ng-model="criterioDeBusca" 
+                  ng-model-options="{ debounce: 500 }"
+                  ng-change="listarPersornagens()"
+                  placeholder="O que você está buscando"/>
+                  
+            <main class="grid" ng-if="lista.length">
+                <article ng-repeat="item in lista">
+                    <img class="img-responsive rounded" ng-src="{{item.thumbnail.path + '.' + item.thumbnail.extension}}" alt="{{item.name}}" />
+                    <div class="text">
+                        <h4 class="card_title">{{item.name}}</h4>
+                        <button class="btn btn-primary" ng-click="obterPersonagem(item.id)">Detalhes</button>
+                    </div>
+                </article>
+            </main>
+
+            <!-- Modal -->
+            <div class="modal fade modal-center" 
+                id="detailModal" 
+                tabindex="-1" 
+                role="dialog" 
+                aria-labelledby="exampleModalLabel" 
+                aria-hidden="true" ng-if="modalOpen">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="detailModalLabel">SÉRIES DE {{personagemSelecionado.name | uppercase}}</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="panel panel-primary">
+                                <table class="table table-bordered table-hover table-animated table-fixed table-not-resizing">
+                                    <thead>
+                                        <tr>
+                                            <th ng-repeat="column in columns">
+                                                {{column.caption}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in listPaginated">
+                                            <td ng-repeat="column in columns">
+                                                {{item[column.data]}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-end">
+                                        <li class="page-item" ng-class="{disabled: paginator.page === 1}" ng-click="setPage(paginator.page - 1)">
+                                            <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                        </li>
+                                        <li class="page-item" ng-repeat="page in pages" ng-click="setPage(page)" ng-class="{active : paginator.page === page}"><a class="page-link" href="#">{{page}}</a></li>
+                                        <li class="page-item" ng-class="{disabled: paginator.page === paginator.endPage}" ng-click="setPage(paginator.page + 1)">
+                                            <a class="page-link" href="#">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" ng-click="hideModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
